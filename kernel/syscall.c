@@ -139,8 +139,12 @@ syscall(void)
   num = p->trapframe->a7;
 
   if ((1 << num & p->mask)) {
-    p->trapframe->a0 = -1;
-    return;
+    char path[MAXPATH];
+    argstr(0, path, MAXPATH);
+    if (strncmp(p->allowPath, path, MAXPATH)) {
+      p->trapframe->a0 = -1;
+      return;
+    }
   }
 
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
