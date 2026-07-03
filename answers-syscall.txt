@@ -1,0 +1,6 @@
+usertrap()
+0xf, system call number (15 SYS_open)
+user mode
+lw	s2,0(zero), s2
+Access to an unmapped address, Unmapped, scause=0xd (Load Page Fault)
+init, 1
