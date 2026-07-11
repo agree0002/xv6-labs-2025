@@ -142,12 +142,36 @@ walkaddr(pagetable_t pagetable, uint64 va)
 
 
 #if defined(LAB_PGTBL) || defined(SOL_MMAP) || defined(SOL_COW)
+int d;
+uint64 vadd;
+
 void
 vmprint(pagetable_t pagetable) {
-  // your code here
+  if (d == 0) {
+    printf("page table %p\n", pagetable);
+    d++;
+  }
+  for (uint64 i = 0; i < 512; i++) {
+    pte_t pte = pagetable[i];
+    if ((pte & PTE_V) && (pte & (PTE_R|PTE_W|PTE_X)) == 0) {
+      for (int j = 0; j < d; j++)
+        printf(" ..");
+      uint64 child = PTE2PA(pte);
+      printf("%p: pte %p pa %p\n", (void*)vadd, (void*)pte, (void*)child);
+      d++;
+      vmprint((pagetable_t)child);
+      d--;
+    } else if(pte & PTE_V) {
+      for (int j = 0; j < d; j++)
+        printf(" ..");
+      printf("%p: pte %p pa %p\n", (void*)vadd, (void*)pte, (void*)PTE2PA(pte));
+      vadd += PGSIZE;
+    } else {
+      vadd += PGSIZE << 9 * (3 - d);
+    }
+  }
 }
 #endif
-
 
 
 // add a mapping to the kernel page table.
