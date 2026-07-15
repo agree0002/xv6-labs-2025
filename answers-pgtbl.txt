@@ -1,0 +1,32 @@
+[Inspect a user-process page table]
+
+Flags
+9 8 7 6 5 4 3 2 1 0
+RSW D A G U X W R V
+
+va 0x0 pte 0x206C7C5B pa 0x81B1F000 perm 0x5B       // perm 01011011 R-XU   text
+va 0x1000 pte 0x206C705B pa 0x81B1C000 perm 0x5B
+va 0x2000 pte 0x206C6C17 pa 0x81B1B000 perm 0x17    // perm 00010111 R-WU   data
+va 0x3000 pte 0x206C6807 pa 0x81B1A000 perm 0x7     // perm 00000111 R-W-   guard page
+va 0x4000 pte 0x206C64D7 pa 0x81B19000 perm 0xD7    // perm 11010111 R-WU   stack
+va 0x5000 pte 0x0 pa 0x0 perm 0x0
+...
+va 0x3FFFFFD000 pte 0x0 pa 0x0 perm 0x0
+va 0x3FFFFFE000 pte 0x206D00C7 pa 0x81B40000 perm 0xC7  // perm 11000111 R-W-   trapframe
+va 0x3FFFFFF000 pte 0x20001C4B pa 0x80007000 perm 0x4B  // perm 01001011 RX--   trampoline
+
+[Print a page table]
+
+page table 0x0000000081b22000
+ ..0x0000000000000000: pte 0x00000000206c7801 pa 0x0000000081b1e000
+ .. ..0x0000000000000000: pte 0x00000000206c7401 pa 0x0000000081b1d000
+ .. .. ..0x0000000000000000: pte 0x00000000206c7c5b pa 0x0000000081b1f000       // perm 01011011 R-XU   text
+ .. .. ..0x0000000000001000: pte 0x00000000206c705b pa 0x0000000081b1c000
+ .. .. ..0x0000000000002000: pte 0x00000000206c6cd7 pa 0x0000000081b1b000       // perm 11010111 R-WU   data
+ .. .. ..0x0000000000003000: pte 0x00000000206c6807 pa 0x0000000081b1a000       // perm 00000111 R-W-   guard page
+ .. .. ..0x0000000000004000: pte 0x00000000206c64d7 pa 0x0000000081b19000       // perm 11010111 R-WU   stack
+ ..0x0000003fc0000000: pte 0x00000000206c8401 pa 0x0000000081b21000
+ .. ..0x0000003fffe00000: pte 0x00000000206c8001 pa 0x0000000081b20000
+ .. .. ..0x0000003fffffd000: pte 0x00000000206d4853 pa 0x0000000081b52000       // perm 01010011 R--U   usyscall
+ .. .. ..0x0000003fffffe000: pte 0x00000000206d00c7 pa 0x0000000081b40000       // perm 11000111 R-W-   trapframe
+ .. .. ..0x0000003ffffff000: pte 0x0000000020001c4b pa 0x0000000080007000       // perm 01001011 RX--   trampoline
