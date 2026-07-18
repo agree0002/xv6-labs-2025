@@ -16,7 +16,7 @@ char *fname(char *path)
 	return ++p;
 }
 
-void find(char *path, char *name)
+void find(char *path, char *name, char *fargv[], int i)
 {
 	int fd;
 	struct stat st;
@@ -39,8 +39,17 @@ void find(char *path, char *name)
 	switch (st.type) {
 	case T_DEVICE:
 	case T_FILE:
-		if (!strcmp(fname(path), name))
-			printf("%s\n", path);
+		if (!strcmp(fname(path), name)) {
+			if (fargv == 0) {
+				printf("%s\n", path);
+			} else {
+				fargv[i] = path;
+				if (fork() == 0)
+					exec(fargv[0], fargv);
+				else
+					wait(0);
+			}
+		}
 		break;
 
 	case T_DIR:
@@ -60,18 +69,28 @@ void find(char *path, char *name)
 				continue;
 			}
 
-			find(buf, name);
+			find(buf, name, fargv, i);
 		}
     	break;
 	}
 	close(fd);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
 	if(argc < 2)
 		exit(0);
  
-    find(argv[1], argv[2]);
+	if (argc > 3) {
+		int i;
+		if (!strcmp(argv[3],"-exec")) {
+			for (i = 0; i < argc - 4; i++)
+				fargv[i] = argv[i + 4];
+			find(argv[1], argv[2], fargv, i);
+		}
+	} else {
+		find(argv[1], argv[2], 0, 0);
+	}
 	exit(0);
 }
