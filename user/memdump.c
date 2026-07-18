@@ -61,5 +61,46 @@ void
 memdump(char *fmt, char *data)
 {
   // Your code here.
+  int i;
+	int n = strlen(fmt);
+	for (i = 0; i < n; i++) {
+	switch (fmt[i]) {
+	case 'i':
+		int intd;
+		memcpy(&intd, data, 4);
+		printf("%d\n", intd);
+		data += 4;
+		break;
 
+	case 'p':
+		long longd;
+		memcpy(&longd, data, 8);
+		printf("%lx\n", longd);
+		data += 8;
+		break;
+
+	case 'h':
+		short shortd;
+		memcpy(&shortd, data, 8);
+		printf("%d\n", shortd);
+		data += 2;
+		break;
+
+	case 'c':
+		printf("%c\n", *data);
+		data += 1;
+		break;
+
+	case 's':
+		char *pointerd;
+		memcpy(&pointerd, data, 8);
+		printf("%s\n", pointerd);
+		data += 8;
+		break;
+
+	case 'S':
+		printf("%s\n", data);
+		break;
+	}
+	}
 }
