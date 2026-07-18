@@ -32,6 +32,7 @@ void
 kinit()
 {
   initlock(&kmem.lock, "kmem");
+  initlock(&supermem.lock, "supermem");
   freerange(end, (void*)PHYSTOP);
 }
 
