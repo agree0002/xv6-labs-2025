@@ -1,0 +1,21 @@
+a0 ~ a7, 13 is stored in the a2 register.
+
+There is no instruction that calls f or g.
+
+0x73e
+
+0x3c
+
+He110 World
+(57616 -> 0xe110
+0x72 -> 'r'
+0x6c -> 'l'
+0x64 -> 'd'
+0x00 -> '\0')
+If it were Big Endian, i = 0x726c6400
+There is no need to change 57616.
+
+A garbage (unpredictable) value will be printed after y=.
+printf's format string "x=%d y=%d" tells it to expect two integer arguments, so it reads them from registers a1 and a2 (per the RISC-V calling convention).
+But the call only actually passes one argument (3), which goes into a1. Nothing is placed in a2 for the second %d.
+Since printf has no way to know how many arguments were actually passed — it only trusts the format string — it goes ahead and reads a2 anyway, printing whatever value happens to be sitting there from previous computation.
